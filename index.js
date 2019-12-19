@@ -113,23 +113,15 @@ let users = [
     });
   }
  
-  let array = [];  
-  function startRecursive() {
- 
-    for (let i = 0; i < 10; i++) {
-        array.push(processUser(users[i].id));
-    }
- 
-    users.splice(0, 10);
-    if (users.length !== 0) {
-       return startRecursive();
-    }
-       
-    return Promise.all(array).then( data => {
-        return data.reduce( (prev, curr) => prev + curr);
+  function startRecursive(sum=0) {
+    let array = []; 
+          data = users.splice(0, 10).map(el => {
+       array.push(processUser(el.id));
     })
    
-   
+    return Promise.all(array)
+          .then(d => d.reduce( (prev, curr) => prev + curr))
+          .then(s => users.length !== 0 ?startRecursive(s+=sum):s+=sum)
 }
    
   startRecursive()
